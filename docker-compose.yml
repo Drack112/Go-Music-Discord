@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: drack-bot
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: on-failure
+    env_file:
+      - .env

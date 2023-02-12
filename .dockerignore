@@ -1,0 +1,9 @@
+tmp
+
+.github
+.git
+
+.vscode
+.env.example
+.gitignore
+LICENSE.md

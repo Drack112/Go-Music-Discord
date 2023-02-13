@@ -35,6 +35,7 @@ func (bot *Bot) Run(resetCommands bool) {
     }
     bot.AddHandler(bot.interactionHandler)
     bot.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
+
     err := bot.Open()
     if err != nil {
         fmt.Println("Cant open a discord session: ", err)

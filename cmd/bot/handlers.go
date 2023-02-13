@@ -42,6 +42,16 @@ func (bot *Bot) createCommands() {
             Name:        "queue",
             Description: "List all songs in queue",
         },
+        {
+            Name:        "avatar",
+            Description: "Take the picture of your beautiful avatar or someone else",
+            Options: []*discordgo.ApplicationCommandOption{
+                {
+                    Type:     discordgo.ApplicationCommandOptionUser,
+                    Required: false,
+                },
+            },
+        },
     }
     for _, command := range commands {
         _, err := bot.ApplicationCommandCreate(bot.State.User.ID, "", command)
@@ -71,6 +81,7 @@ func (bot *Bot) commandHandler(interact *discordgo.InteractionCreate) {
         fmt.Println(now, interact.ApplicationCommandData().Name, "command used by", interact.Member.User.Username)
     }
     messageChannel := make(chan string)
+    messageEmbedChannel := make(chan *discordgo.MessageEmbed)
     switch interact.ApplicationCommandData().Name {
     case "play":
         go bot.play(interact, messageChannel)
@@ -80,14 +91,24 @@ func (bot *Bot) commandHandler(interact *discordgo.InteractionCreate) {
         go bot.skip(interact, messageChannel)
     case "queue":
         go bot.queue(interact, messageChannel)
+    case "avatar":
+        go bot.Avatar(interact, messageEmbedChannel)
     }
-    message := <-messageChannel
-    _, err = bot.InteractionResponseEdit(interact.Interaction, &discordgo.WebhookEdit{
-        Content: &message,
-    })
-
-    if err != nil {
-        fmt.Println("Error while updating interaction response: ", err)
+    select {
+    case message := <-messageChannel:
+        _, err = bot.InteractionResponseEdit(interact.Interaction, &discordgo.WebhookEdit{
+            Content: &message,
+        })
+        if err != nil {
+            fmt.Println("Error while updating interaction response: ", err)
+        }
+    case messageEmbed := <-messageEmbedChannel:
+        _, err = bot.InteractionResponseEdit(interact.Interaction, &discordgo.WebhookEdit{
+            Embeds: &[]*discordgo.MessageEmbed{messageEmbed},
+        })
+        if err != nil {
+            fmt.Println("Error while updating interaction response: ", err)
+        }
     }
 }
 

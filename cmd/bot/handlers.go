@@ -44,13 +44,7 @@ func (bot *Bot) createCommands() {
         },
         {
             Name:        "avatar",
-            Description: "Take the picture of your beautiful avatar or someone else",
-            Options: []*discordgo.ApplicationCommandOption{
-                {
-                    Type:     discordgo.ApplicationCommandOptionUser,
-                    Required: false,
-                },
-            },
+            Description: "Take the picture of your beautiful avatar",
         },
     }
     for _, command := range commands {

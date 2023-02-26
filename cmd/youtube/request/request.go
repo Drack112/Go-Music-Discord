@@ -29,14 +29,14 @@ func New(query string, callback chan bool) (*Request, error) {
     var title string
     var reqUrl string
     if isValidURL(query) {
-        output, err := exec.Command("youtube-dl", "-e", query).Output()
+        output, err := exec.Command("yt-dlp", "-e", query).Output()
         if err != nil {
             return nil, err
         }
         title = string(output)
         reqUrl = query
     } else {
-        output, err := exec.Command("youtube-dl", "-j", "ytsearch:"+query).Output()
+        output, err := exec.Command("yt-dlp", "-j", "ytsearch:"+query).Output()
         if err != nil {
             return nil, err
         }
@@ -52,7 +52,7 @@ func New(query string, callback chan bool) (*Request, error) {
 }
 
 func (r Request) GetStream() (string, error) {
-    streamUrl, err := exec.Command("youtube-dl", "-f", "bestaudio", "-g", r.ReqURL).Output()
+    streamUrl, err := exec.Command("yt-dlp", "-f", "bestaudio", "-g", r.ReqURL).Output()
     if err != nil {
         return "", err
     }
